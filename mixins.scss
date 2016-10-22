@@ -1,0 +1,125 @@
+// This is a collection of mixins according to my
+// article here: http://vangeltzo.com/posts/collection_of_sass_mixins.html
+// NOTE: no prefixes added.
+
+// The collection consist of 4 mixins and a function
+
+// 1. Centering mixin (with flex)
+// 2. Overlay upon image mixin
+// 3. Text truncate mixin
+// 4. Color theme mixin
+// and z-index function
+
+
+// 1 // CENTERING MIXIN (WITH FLEX)
+
+// example: @include center(vertical);
+
+@mixin center($position) {
+  display: flex;
+
+  @if $position == 'both' {
+    align-items: center;
+    justify-content: center;
+  }
+
+  @else if $position == 'vertical' {
+    align-items: center;
+  }
+
+  @else if $position == 'horizontal' {
+    justify-content: center;
+  }
+
+  @else if $position == 'none' {
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+}
+
+
+// 2 // OVERLAY UPON IMAGE MIXIN
+
+// example: @include overlay('mountains.jpg', #000, .4);
+
+@mixin overlay($image, $color, $amount) {
+  background: linear-gradient(rgba($color, $amount), rgba($color, $amount)),
+              url(#{$image}) center no-repeat;
+}
+
+
+// 3 // TEXT TRUNCATE MIXIN
+
+// example: @include truncate(1, 100px); OR @include truncate(3);
+
+@mixin truncate($rows, $width:'') {
+  overflow: hidden;
+
+  @if $rows == 1 {
+    @if $width !='' {
+      max-width: $width;
+    }
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  @else if $rows > 1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: $rows;
+    -webkit-box-orient: vertical;
+  }
+}
+
+
+// 4 // COLOR THEME MIXIN
+
+// example: @include color-theme(red);
+
+@mixin color-theme($base-color) {
+  background: $base-color;
+
+  @if (lightness($base-color) > 50) {
+    color: #000;
+  }
+
+  @else {
+    color: #fff;
+  }
+
+  &:hover,
+  &:target,
+  &:focus {
+    background: darken($base-color, 10);
+  }
+}
+
+
+// FUNCTION // Z INDEX
+
+// example:
+
+// modal {
+//   z-index: z(modal);
+// }
+
+@function z($layer) {
+  @if map-has-key($layers, $layer) {
+    @return map-get($layers, $layer);
+  }
+
+  @else {
+    @return null;
+  }
+}
+
+$layers: (
+  "top":             100,
+  "modal":            40,
+  "navigation":       30,
+  "header":           20,
+  "footer":           20,
+  "default":          10,
+  "bottom":           -1
+);
